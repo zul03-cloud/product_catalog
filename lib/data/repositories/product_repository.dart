@@ -5,7 +5,6 @@ import 'models/product.dart';
 class ProductRepository {
   final String _baseUrl = 'https://dummyjson.com/products';
 
-  // Fetch all products
   Future<List<Product>> fetchProducts() async {
     final response = await http.get(Uri.parse(_baseUrl));
 
@@ -18,7 +17,6 @@ class ProductRepository {
     }
   }
 
-  // Fetch product detail by ID
   Future<Product> fetchProductById(int id) async {
     final response = await http.get(Uri.parse('$_baseUrl/$id'));
 
@@ -30,7 +28,6 @@ class ProductRepository {
     }
   }
 
-  // Search products by query string
   Future<List<Product>> searchProducts(String query) async {
     final response = await http.get(Uri.parse('$_baseUrl/search?q=$query'));
 
