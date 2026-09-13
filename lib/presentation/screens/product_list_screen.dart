@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/product_provider.dart';
@@ -12,6 +13,7 @@ class ProductListScreen extends StatefulWidget {
 
 class _ProductListScreenState extends State<ProductListScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final Debouncer _debouncer = Debouncer(milliseconds: 500);
 
   @override
   void initState() {
@@ -24,6 +26,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   void dispose() {
     _searchController.dispose();
+    _debouncer.dispose();
     super.dispose();
   }
 
@@ -59,8 +62,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 ),
               ),
               onChanged: (query) {
-                Provider.of<ProductProvider>(context, listen: false)
-                    .searchProducts(query);
+                _debouncer.run(() {
+                  Provider.of<ProductProvider>(context, listen: false)
+                      .searchProducts(query);
+                });
               },
             ),
           ),
@@ -132,5 +137,21 @@ class _ProductListScreenState extends State<ProductListScreen> {
         ],
       ),
     );
+  }
+}
+
+class Debouncer {
+  final int milliseconds;
+  Timer? _timer;
+
+  Debouncer({this.milliseconds = 500});
+
+  void run(VoidCallback action) {
+    _timer?.cancel();
+    _timer = Timer(Duration(milliseconds: milliseconds), action);
+  }
+
+  void dispose() {
+    _timer?.cancel();
   }
 }
