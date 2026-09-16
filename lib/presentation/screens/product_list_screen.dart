@@ -109,38 +109,49 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
                 return ListView.builder(
                   controller: _scrollController,
-                  itemCount: provider.products.length,
+                  itemCount: provider.hasMore
+                     ? provider.products.length + 1
+                     : provider.products.length,
                   itemBuilder: (context, index) {
-                    final product = provider.products[index];
-                    return ListTile(
-                      leading: Image.network(
-                        product.thumbnail,
-                        width: 50,
-                        height: 50,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const Icon(Icons.image),
-                      ),
-                      title: Text(product.title),
-                      subtitle: Text('\$${product.price.toStringAsFixed(2)}'),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 18),
-                          const SizedBox(width: 4),
-                          Text(product.rating.toString()),
-                        ],
-                      ),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) =>
-                                ProductDetailScreen(productId: product.id),
-                          ),
-                        );
-                      },
-                    );
-                  },
+                      if (index == provider.products.length) {
+                          return const Padding(
+                             padding: EdgeInsets.symmetric(vertical: 16.0),
+                             child: Center(
+                               child: CircularProgressIndicator(),
+                            ),
+                          );
+                       }
+
+                      final product = provider.products[index];
+                      return ListTile(
+                        leading: Image.network(
+                          product.thumbnail,
+                          width: 50,
+                           height: 50,
+                           fit: BoxFit.cover,
+                           errorBuilder: (_, __, ___) => const Icon(Icons.image),
+                         ),
+                         title: Text(product.title),
+                         subtitle: Text('\$${product.price.toStringAsFixed(2)}'),
+                         trailing: Row(
+                           mainAxisSize: MainAxisSize.min,
+                           children: [
+                             const Icon(Icons.star, color: Colors.amber, size: 18),
+                             const SizedBox(width: 4),
+                             Text(product.rating.toString()),
+                           ],
+                         ),
+                         onTap: () {
+                           Navigator.push(
+                               context,
+                               MaterialPageRoute(
+                               builder: (context) =>
+                                  ProductDetailScreen(productId: product.id),
+                               ),
+                           );
+                         },
+                       );
+                     },
                 );
               },
             ),
