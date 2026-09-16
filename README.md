@@ -1,17 +1,39 @@
-# product_catalog
+# Product Catalog App
 
-A new Flutter project.
+A production-ready Flutter application built following Clean Architecture principles, demonstrating state management, debounced search, and infinite scroll pagination.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## Features
+- **Clean Architecture**: Clear separation of concerns into `data` (models & repositories) and `presentation` (providers & screens) layers.
+- **State Management**: Reactive state management using `Provider` handling Loading, Error, Success, and Empty states gracefully.
+- **Debounced Search**: Optimized network requests using a custom `Debouncer` helper to delay API calls while typing.
+- **Infinite Scroll Pagination**: Incremental data fetching (`limit` & `skip` query parameters) using a `ScrollController`.
+- **Navigation & Detail View**: Interactive navigation passing parameters to fetch detailed product information.
 
-A few resources to get you started if this is your first Flutter project:
+---
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Tech Stack
+- **Framework**: Flutter
+- **State Management**: `provider`
+- **Networking**: `http`
+- **API Target**: [DummyJSON Products API](https://dummyjson.com/docs/products)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+---
+
+## Architecture Overview
+
+```text
+lib/
+├── data/
+│   ├── models/
+│   │   └── product.dart
+│   └── repositories/
+│       └── product_repository.dart
+├── presentation/
+│   ├── providers/
+│   │   └── product_provider.dart
+│   └── screens/
+│       ├── product_list_screen.dart
+│       └── product_detail_screen.dart
+└── main.dart
