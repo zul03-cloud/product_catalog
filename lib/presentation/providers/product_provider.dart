@@ -60,7 +60,7 @@ Future<void> loadMoreProducts() async {
     _isLoadingMore = true;
     notifyListeners();
 
-    await fetchProducts();
+    await Future.delayed(const Duration(seconds: 2));
   }
 
   Future<void> fetchProductById(int id) async {
