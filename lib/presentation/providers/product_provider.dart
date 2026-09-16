@@ -5,6 +5,14 @@ import 'package:product_catalog/data/repositories/product_repository.dart';
 class ProductProvider extends ChangeNotifier {
   final ProductRepository _repository = ProductRepository();
 
+  int _skip = 0;
+  final int _limit = 10;
+  bool _hasMore = true;
+  bool _isLoadingMore = false;
+
+  bool get hasMore => _hasMore;
+  bool get isLoadingMore => _isLoadingMore;
+
   List<Product> _products = [];
   Product? _selectedProduct;
   bool _isLoading = false;
@@ -15,19 +23,44 @@ class ProductProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
-  Future<void> fetchProducts() async {
+  Future<void> fetchProducts({bool isRefresh = false}) async {
+  if (isRefresh) {
+    _skip = 0;
+    _hasMore = true;
+    _products = [];
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
+  }
 
-    try {
-      _products = await _repository.fetchProducts();
-    } catch (e) {
-      _errorMessage = e.toString();
-    } finally {
-      _isLoading = false;
-      notifyListeners();
+  try {
+    final newProducts = await _repository.fetchProducts(
+      limit: _limit,
+      skip: _skip,
+    );
+
+    if (newProducts.length < _limit) {
+      _hasMore = false;
     }
+
+    _products.addAll(newProducts);
+    _skip += _limit;
+  } catch (e) {
+    _errorMessage = e.toString();
+  } finally {
+    _isLoading = false;
+    _isLoadingMore = false;
+    notifyListeners();
+  }
+}
+
+Future<void> loadMoreProducts() async {
+    if (_isLoadingMore || !_hasMore || _isLoading) return;
+
+    _isLoadingMore = true;
+    notifyListeners();
+
+    await fetchProducts();
   }
 
   Future<void> fetchProductById(int id) async {

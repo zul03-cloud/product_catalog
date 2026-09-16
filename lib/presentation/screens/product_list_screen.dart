@@ -14,19 +14,29 @@ class ProductListScreen extends StatefulWidget {
 class _ProductListScreenState extends State<ProductListScreen> {
   final TextEditingController _searchController = TextEditingController();
   final Debouncer _debouncer = Debouncer(milliseconds: 500);
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     Future.microtask(
       () => Provider.of<ProductProvider>(context, listen: false).fetchProducts(),
     );
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      Provider.of<ProductProvider>(context, listen: false).loadMoreProducts();
+    }
   }
 
   @override
   void dispose() {
     _searchController.dispose();
     _debouncer.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -98,6 +108,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 }
 
                 return ListView.builder(
+                  controller: _scrollController,
                   itemCount: provider.products.length,
                   itemBuilder: (context, index) {
                     final product = provider.products[index];
