@@ -114,13 +114,15 @@ class _ProductListScreenState extends State<ProductListScreen> {
                      : provider.products.length,
                   itemBuilder: (context, index) {
                       if (index == provider.products.length) {
-                          return const Padding(
-                             padding: EdgeInsets.symmetric(vertical: 16.0),
-                             child: Center(
-                               child: CircularProgressIndicator(),
-                            ),
-                          );
-                       }
+                          return provider.isLoadingMore
+                              ? const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              : const SizedBox.shrink();
+                        }
 
                       final product = provider.products[index];
                       return ListTile(

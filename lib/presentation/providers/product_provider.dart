@@ -55,13 +55,27 @@ class ProductProvider extends ChangeNotifier {
 }
 
 Future<void> loadMoreProducts() async {
-    if (_isLoadingMore || !_hasMore || _isLoading) return;
+  if (_isLoadingMore || !_hasMore) return;
 
-    _isLoadingMore = true;
-    notifyListeners();
+  _isLoadingMore = true;
+  notifyListeners(); 
+  try {
+    final newProducts = await _repository.fetchProducts(
+      limit: _limit, 
+      skip: _products.length,
+    );
 
-    await Future.delayed(const Duration(seconds: 2));
+    if (newProducts.length < _limit) {
+      _hasMore = false;
+    }
+
+    _products.addAll(newProducts);
+  } catch (e) {
+  } finally {
+    _isLoadingMore = false;
+    notifyListeners(); 
   }
+}
 
   Future<void> fetchProductById(int id) async {
     _isLoading = true;
